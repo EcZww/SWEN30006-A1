@@ -1,11 +1,15 @@
 package simulation;
 
+import com.unimelb.swen30006.wifimodem.WifiModem;
+
 import java.io.Serial;
 import java.util.HashMap;
 
 public class Building {
 
     private HashMap<Integer,Double> ServiceFeeTable = new HashMap<>();
+
+    private static Building _instance = null;
 	
     /** The number of floors in the building **/
     public static int FLOORS;
@@ -25,8 +29,20 @@ public class Building {
         if (ServiceFeeTable.containsKey(floor)){
             return ServiceFeeTable.get(floor);
         }else {
-            return 0.5D;
+            return -1;
         }
+    }
+
+    public static Building getInstance() throws Exception {
+        if (_instance == null) {
+            Class var1 = Building.class;
+            synchronized(Building.class) {
+                if (_instance == null) {
+                    _instance = new Building();
+                }
+            }
+        }
+        return _instance;
     }
 
 }

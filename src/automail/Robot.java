@@ -6,8 +6,8 @@ import exceptions.ItemTooHeavyException;
 import simulation.Building;
 import simulation.Clock;
 import simulation.IMailDelivery;
-import java.lang.Math;
-import java.nio.file.AtomicMoveNotSupportedException;
+import automail.Calculator;
+
 
 /**
  * The robot delivers mail!
@@ -18,6 +18,7 @@ public class Robot {
     /** new changes**/
     static public final int MOVEMENT = 5;
     static public final double LOOKUP = 0.1;
+    //private double totalBillableActivity = 0;
 
     IMailDelivery delivery;
     protected final String id;
@@ -29,15 +30,19 @@ public class Robot {
     private MailPool mailPool;
     private boolean receivedDispatch;
     /**new changes**/
+    private double markupPercentage;
+    private double activityUnitPrice;
     private double currentActivityUnits;
     private double totalActivityUnits;
-    private double charge;
-    private double activityCost;
-    private double serviceFee;
+    private double billableActivityUnits;
+    //private double charge;
+    //private double activityCost;
+    //private double serviceFee;
 
-    private WifiModem wifiModem = WifiModem.getInstance(Building.MAILROOM_LOCATION);
 
-    static private Building building = new Building();
+    //private WifiModem wifiModem = WifiModem.getInstance(Building.MAILROOM_LOCATION);
+    private Calculator calculator = new Calculator();
+
     private MailItem deliveryItem = null;
     private MailItem tube = null;
     
@@ -61,11 +66,13 @@ public class Robot {
         this.receivedDispatch = false;
         this.deliveryCounter = 0;
         /**new changes**/
-        this.totalActivityUnits = 0;
         this.currentActivityUnits = 0;
-        this.charge = 0;
-        this.activityCost = 0;
-        this.serviceFee = 0;
+        this.billableActivityUnits = 0;
+        this.markupPercentage = mailPool.getMarkupPercentage();
+        this.activityUnitPrice = mailPool.getActivityUnitPrice();
+        //this.charge = 0;
+        //this.activityCost = 0;
+        //this.serviceFee = 0;
     }
     
     /**
@@ -83,7 +90,6 @@ public class Robot {
     	switch(current_state) {
     		/** This state is triggered when the robot is returning to the mailroom after a delivery */
     		case RETURNING:
-
     		    totalActivityUnits += currentActivityUnits;
     		    currentActivityUnits = 0;
     			/** If its current position is at the mailroom, then the robot should change state */
@@ -99,7 +105,8 @@ public class Robot {
                 } else {
                 	/** If the robot is not at the mailroom floor yet, then move towards it! */
                     moveTowards(Building.MAILROOM_LOCATION);
-                	break;
+                    totalActivityUnits += MOVEMENT;
+                    break;
                 }
     		case WAITING:
                 /** If the StorageTube is ready and the Robot is waiting in the mailroom then start the delivery */
@@ -107,18 +114,26 @@ public class Robot {
                 	receivedDispatch = false;
                 	deliveryCounter = 0; // reset delivery counter
                 	setDestination();
-
-                    currentActivityUnits = deliveryItem.getDestFloor()*MOVEMENT;
                 	changeState(RobotState.DELIVERING);
                 }
                 break;
     		case DELIVERING:
     			if(current_floor == destination_floor){ // If already here drop off either way
                     /** Delivery complete, report this to the simulator! */
-                    calculateCharge(deliveryItem);
+
+                    calculator.calculateCharge(deliveryItem,current_floor,markupPercentage,
+                            activityUnitPrice,currentActivityUnits,true);
+                    /** only charge tenant once for lookup **/
+
                     delivery.deliver(deliveryItem);
+
+                    currentActivityUnits += calculator.getLookUpCount()*LOOKUP;
+                    System.out.println("bt before = "+billableActivityUnits);
+                    billableActivityUnits += LOOKUP;
+                    System.out.println("bt after = "+billableActivityUnits);
+                    billableActivityUnits += (deliveryItem.destination_floor-Building.MAILROOM_LOCATION)*2*MOVEMENT;
+                    System.out.println("bt final = "+billableActivityUnits);
                     deliveryItem = null;
-                    currentActivityUnits = 0;
 
                     if(deliveryCounter > 2){  // Implies a simulation bug
                     	throw new ExcessiveDeliveryException();
@@ -126,24 +141,30 @@ public class Robot {
                     /** Check if want to return, i.e. if there is no item in the tube*/
                     if(tube == null){
                     	changeState(RobotState.RETURNING);
-
                     }
                     else{
                         /** If there is another item, set the robot's route to the location to deliver the item */
                         deliveryItem = tube;
                         tube = null;
                         setDestination();
-                        currentActivityUnits = Math.abs(deliveryItem.getDestFloor()-current_floor)*MOVEMENT;
                         changeState(RobotState.DELIVERING);
                     }
-                    totalActivityUnits += currentActivityUnits;
 
                 } else {
 	        		/** The robot is not at the destination yet, move towards it! */
 	                moveTowards(destination_floor);
+	                currentActivityUnits += MOVEMENT;
     			}
                 break;
     	}
+    }
+
+    public double getTotalBillableActivity(){
+        return billableActivityUnits;
+    }
+
+    public double getTotalActivityUnits(){
+        return totalActivityUnits;
     }
 
     /**
@@ -181,7 +202,7 @@ public class Robot {
     	}
     	current_state = nextState;
     	if(nextState == RobotState.DELIVERING){
-            System.out.printf("T: %3d > %7s-> [%s]%n", Clock.Time(), getIdTube(), deliveryItem.toString());
+            System.out.printf("T: %3d > %7s-> [%s]%n", Clock.Time(), getIdTube(), deliveryItem.toString(false));
     	}
     }
 
@@ -205,26 +226,7 @@ public class Robot {
 		if (tube.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
 	}
 
-	/**new changes**/
-	//public double getActivityUnits(){ return this.currentactivityUnits;}
-
-    public void calculateCharge(MailItem deliveryItem){
-        serviceFee = wifiModem.forwardCallToAPI_LookupPrice(current_floor);
-        currentActivityUnits += LOOKUP;
-        if(serviceFee == -1) {
-            System.out.println("failed");
-            serviceFee = building.getFloorServiceFee(current_floor);
-        }
-        //System.out.println(serviceFee);
-        building.insertServiceFee(current_floor,serviceFee);
 
 
-        activityCost = currentActivityUnits  * mailPool.getActivityUnitPrice();
-
-        //System.out.println(currentActivityUnits);
-        charge = (serviceFee + activityCost)*(1+mailPool.getMarkupPercentage());
-        //System.out.printf("charge = (%.3f + %.3f * %.3f)*(1+%.3f)%n",serviceFee,currentActivityUnits,mailPool.getActivityUnitPrice(),mailPool.getMarkupPercentage());
-        deliveryItem.setFinalCharge(charge);
-     }
 
 }

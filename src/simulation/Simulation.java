@@ -25,6 +25,8 @@ public class Simulation {
 	private static boolean COMMERCIAL_DISPLAY;
 	private static double MARKUP_PERCENTAGE;
 	private static double ACTIVITY_UNITPRICE;
+	private static double BILLABLE_ACTIVITY;
+	private static double TOTAL_ACTIVITY_COST;
 
 	/**
 	 * Constant for the mail generator
@@ -99,6 +101,14 @@ public class Simulation {
 			}
 			Clock.Tick();
 		}
+
+		for (int i = 0; i < NUM_ROBOTS; i++){
+			String id = "R"+i;
+			System.out.println(BILLABLE_ACTIVITY);
+			System.out.println(automail.getRobot(id).getTotalBillableActivity());
+			BILLABLE_ACTIVITY += automail.getRobot(id).getTotalBillableActivity();
+
+		}
 		printResults();
 		System.out.println(wModem.Turnoff());
 	}
@@ -164,7 +174,7 @@ public class Simulation {
 		public void deliver(MailItem deliveryItem) {
 			if (!MAIL_DELIVERED.contains(deliveryItem)) {
 				MAIL_DELIVERED.add(deliveryItem);
-				System.out.printf("T: %3d > Delivered(%4d) [%s]%n", Clock.Time(), MAIL_DELIVERED.size(), deliveryItem.toString());
+				System.out.printf("T: %3d > Delivered(%4d) [%s]%n", Clock.Time(), MAIL_DELIVERED.size(), deliveryItem.toString(true));
 				// Calculate delivery score
 				total_delay += calculateDeliveryDelay(deliveryItem);
 			} else {
@@ -187,7 +197,8 @@ public class Simulation {
 
 	public static void printResults() {
 		System.out.println("T: " + Clock.Time() + " | Simulation complete!");
-		System.out.println("Final Delivery time: " + Clock.Time());
+		System.out.printf("Billable activity is %.2f%n", BILLABLE_ACTIVITY);
+		System.out.printf("Total activity cost is %.2f%n", BILLABLE_ACTIVITY*ACTIVITY_UNITPRICE);
 		System.out.printf("Delay: %.2f%n", total_delay);
 	}
 

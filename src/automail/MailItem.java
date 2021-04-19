@@ -6,6 +6,7 @@ import simulation.Simulation;
 
 import java.util.Map;
 import java.util.TreeMap;
+import automail.Robot;
 
 // import java.util.UUID;
 
@@ -23,8 +24,13 @@ public class MailItem {
     /** The weight in grams of the mail item */
     protected final int weight;
 
-    protected double finalCharge;
-    protected double expectedCharge;
+    protected String deliveringRobotId;
+
+    private double finalCharge;
+    private double expectedCharge;
+    private double activityUnits;
+    private double serviceFee;
+    private double activityUnitPrice;
 
 
 
@@ -34,20 +40,31 @@ public class MailItem {
      * @param arrival_time the time that the mail arrived
      * @param weight the weight of this mail item
      */
-    public MailItem(int dest_floor, int arrival_time, int weight){
+    public MailItem(int dest_floor, int arrival_time, int weight) {
         this.destination_floor = dest_floor;
         this.id = String.valueOf(hashCode());
         this.arrival_time = arrival_time;
         this.weight = weight;
         this.finalCharge = 0;
         this.expectedCharge = 0;
+        this.activityUnits = 0;
+        this.serviceFee = 0;
+        this.activityUnitPrice =0;
     }
+
     //serive fee,activity unit, markup percentage, activity unit price
-    @Override
-    public String toString(){
-        //if(Simulation.)
-        return String.format("Mail Item:: ID: %6s | Arrival: %4d | Destination: %2d | Weight: %4d | Charge: %.2f"
-                , id, arrival_time, destination_floor, weight,finalCharge);
+
+    public String toString(boolean deliveredStat){
+        if(deliveredStat) {
+            return String.format("Mail Item:: ID: %6s | Arrival: %4d | Destination: %2d | Weight: %4d | Charge: %.2f" +
+                            " | Cost: %.2f | Fee: %.2f | Activity: %.2f"
+                    , id, arrival_time, destination_floor, weight, finalCharge,
+                    activityUnits*activityUnitPrice,serviceFee,activityUnits);
+        }
+        else{
+            return String.format("Mail Item:: ID: %6s | Arrival: %4d | Destination: %2d | Weight: %4d"
+                    , id, arrival_time, destination_floor, weight);
+        }
     }
 
     /**
@@ -107,5 +124,29 @@ public class MailItem {
 
     public void setExpectedCharge(double expectedCharge) {
         this.expectedCharge = expectedCharge;
+    }
+
+    public void setDeliveringRobotId(String deliveringRobotId) {
+        this.deliveringRobotId = deliveringRobotId;
+    }
+
+    public double getActivityUnits() {
+        return activityUnits;
+    }
+
+    public void setActivityUnits(double activityUnits) {
+        this.activityUnits = activityUnits;
+    }
+
+    public double getServiceFee() {
+        return serviceFee;
+    }
+
+    public void setServiceFee(double serviceFee) {
+        this.serviceFee = serviceFee;
+    }
+
+    public void setActivityUnitPrice(double activityUnitPrice) {
+        this.activityUnitPrice = activityUnitPrice;
     }
 }

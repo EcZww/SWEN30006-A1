@@ -3,13 +3,9 @@ package automail;
 import java.util.LinkedList;
 import java.util.Comparator;
 import java.util.ListIterator;
-
-import com.unimelb.swen30006.wifimodem.WifiModem;
 import exceptions.ItemTooHeavyException;
-
 import simulation.Building;
 
-import javax.crypto.Mac;
 
 /**
  * addToPool is called when there are mail items newly arrived at the building to add to the MailPool or
@@ -76,8 +72,9 @@ public class MailPool {
 	
 	private LinkedList<Item> pool;
 	private LinkedList<Robot> robots;
+	static public final int MOVEMENT = 5;
 
-	private WifiModem wifiModem = WifiModem.getInstance(Building.MAILROOM_LOCATION);
+	private Calculator calculator = new Calculator();
 	private double serviceFee;
 	private double markupPercentage;
 	private double activityUnitPrice;
@@ -98,8 +95,11 @@ public class MailPool {
      */
 	public void addToPool(MailItem mailItem) {
 		Item item = new Item(mailItem);
+		int activityUnits = (item.destination - Building.MAILROOM_LOCATION)*MOVEMENT;
+		int destFloor = item.destination;
 		pool.add(item);
-		item.mailItem.setExpectedCharge(calculateExpectedCharge(item.mailItem));
+		calculator.calculateCharge(item.mailItem,destFloor,markupPercentage,activityUnitPrice,
+				activityUnits,false);
 		pool.sort(new ItemComparator());
 	}
 	
@@ -122,10 +122,13 @@ public class MailPool {
 		ListIterator<Item> j = pool.listIterator();
 		if (pool.size() > 0) {
 			try {
-			robot.addToHand(j.next().mailItem);// hand first as we want higher priority delivered first
+				Item item = j.next();
+				robot.addToHand(item.mailItem);// hand first as we want higher priority delivered first
+				item.mailItem.setDeliveringRobotId(robot.id);
 				j.remove();
 			if (pool.size() > 0) {
 				robot.addToTube(j.next().mailItem);
+				item.mailItem.setDeliveringRobotId(robot.id);
 				j.remove();
 			}
 
@@ -152,18 +155,18 @@ public class MailPool {
 		return activityUnitPrice;
 	}
 
-	public double calculateExpectedCharge(MailItem mailitem){
+	/**public double calculateExpectedCharge(MailItem mailitem){
 		this.serviceFee = -1;
 		while(serviceFee==-1) {
-			System.out.println(mailitem.getDestFloor());
+			//System.out.println(mailitem.getDestFloor());
 			serviceFee = wifiModem.forwardCallToAPI_LookupPrice(mailitem.getDestFloor());
 		}
 
-		System.out.println("fee is "+ serviceFee);
+		//System.out.println("fee is "+ serviceFee);
 		double expected_charge = ((mailitem.destination_floor - Building.MAILROOM_LOCATION)
 				*activityUnitPrice + serviceFee)*(1+markupPercentage);
 		return expected_charge;
 
-	}
+	}**/
 
 }

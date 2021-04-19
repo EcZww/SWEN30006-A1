@@ -127,7 +127,7 @@ public class MailGenerator {
     	// Check if there are any mail to create
         if(this.allMail.containsKey(Clock.Time())){
             for(MailItem mailItem : allMail.get(Clock.Time())){
-                System.out.printf("T: %3d > new addToPool [%s]%n", Clock.Time(), mailItem.toString());
+                System.out.printf("T: %3d > new addToPool [%s]%n", Clock.Time(), mailItem.toString(false));
                 mailPool.addToPool(mailItem);
             }
         }
