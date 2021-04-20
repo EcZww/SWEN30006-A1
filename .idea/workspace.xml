@@ -36,8 +36,8 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="extractMethod.generateAnnotations" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Simulation.class" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="CodeWithMe" />
   </component>
   <component name="RunManager">
     <configuration name="Simulation" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -98,26 +98,26 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="737" y="444" width="447" height="221" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1920.1040@0.0.1920.1040" timestamp="1618571178807" />
-    <state x="741" y="292" key="FileChooserDialogImpl" timestamp="1618884603238">
+    <state x="741" y="292" key="FileChooserDialogImpl" timestamp="1618925221638">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="741" y="292" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1618884603238" />
-    <state width="1250" height="313" key="GridCell.Tab.0.bottom" timestamp="1618892144973">
+    <state x="741" y="292" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1618925221638" />
+    <state width="1483" height="310" key="GridCell.Tab.0.bottom" timestamp="1618925368049">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1250" height="313" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1618892144973" />
-    <state width="1250" height="313" key="GridCell.Tab.0.center" timestamp="1618892144973">
+    <state width="1483" height="310" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1618925368049" />
+    <state width="1483" height="310" key="GridCell.Tab.0.center" timestamp="1618925368049">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1250" height="313" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1618892144973" />
-    <state width="1250" height="313" key="GridCell.Tab.0.left" timestamp="1618892144973">
+    <state width="1483" height="310" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1618925368049" />
+    <state width="1483" height="310" key="GridCell.Tab.0.left" timestamp="1618925368049">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1250" height="313" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1618892144973" />
-    <state width="1250" height="313" key="GridCell.Tab.0.right" timestamp="1618892144973">
+    <state width="1483" height="310" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1618925368049" />
+    <state width="1483" height="310" key="GridCell.Tab.0.right" timestamp="1618925368049">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1250" height="313" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1618892144973" />
+    <state width="1483" height="310" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1618925368049" />
     <state x="722" y="293" key="NewModule_or_Project.wizard" timestamp="1618846259508">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -126,10 +126,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="774" y="480" width="372" height="143" key="ReplaceDuplicatesPrompt/0.0.1920.1040@0.0.1920.1040" timestamp="1618800895414" />
-    <state x="460" y="129" key="SettingsEditor" timestamp="1618847136785">
+    <state x="460" y="129" key="SettingsEditor" timestamp="1618913979002">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="460" y="129" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1618847136785" />
+    <state x="460" y="129" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1618913979002" />
     <state x="597" y="134" width="1195" height="700" key="dock-window-1" timestamp="1618835675357">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

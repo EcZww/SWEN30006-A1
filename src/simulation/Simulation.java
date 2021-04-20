@@ -23,11 +23,10 @@ import automail.Price;
 public class Simulation {
 	private static int NUM_ROBOTS;
 	private static double CHARGE_THRESHOLD;
-	private static boolean COMMERCIAL_DISPLAY;
+	private static boolean CHARGE_DISPLAY;
 	private static double MARKUP_PERCENTAGE;
 	private static double ACTIVITY_UNITPRICE;
 	private static double BILLABLE_ACTIVITY;
-	private static double TOTAL_ACTIVITY_UNITS;
 
 	/**
 	 * Constant for the mail generator
@@ -84,7 +83,7 @@ public class Simulation {
 		MailPool mailPool = new MailPool(NUM_ROBOTS);
 		Automail automail = new Automail(mailPool, new ReportDelivery(), NUM_ROBOTS);
 		/**new changes**/
-		MailGenerator mailGenerator = new MailGenerator(MAIL_TO_CREATE, MAIL_MAX_WEIGHT,COMMERCIAL_DISPLAY, mailPool, seedMap);
+		MailGenerator mailGenerator = new MailGenerator(MAIL_TO_CREATE, MAIL_MAX_WEIGHT,CHARGE_DISPLAY, mailPool, seedMap);
 
 		/** Generate all the mails */
 		mailGenerator.generateAllMail();
@@ -107,8 +106,6 @@ public class Simulation {
 		for (int i = 0; i < NUM_ROBOTS; i++){
 			String id = "R"+i;
 			BILLABLE_ACTIVITY += automail.getRobot(id).getTotalBillableActivity();
-			TOTAL_ACTIVITY_UNITS += automail.getRobot(id).getTotalActivityUnits();
-
 		}
 		printResults();
 		System.out.println(wModem.Turnoff());
@@ -159,8 +156,8 @@ public class Simulation {
 		CHARGE_THRESHOLD = Double.parseDouble(automailProperties.getProperty("ChargeThreshold"));
 		System.out.println("#Charge Threshold: " + CHARGE_THRESHOLD);
 		// Charge Display
-		COMMERCIAL_DISPLAY = Boolean.parseBoolean(automailProperties.getProperty("CommercialDisplay"));
-		System.out.println("#Charge Display: " + COMMERCIAL_DISPLAY);
+		CHARGE_DISPLAY = Boolean.parseBoolean(automailProperties.getProperty("ChargeDisplay"));
+		System.out.println("#Charge Display: " + CHARGE_DISPLAY);
 		ACTIVITY_UNITPRICE = Double.parseDouble(automailProperties.getProperty("ActivityUnitPrice"));
 		MARKUP_PERCENTAGE = Double.parseDouble(automailProperties.getProperty("MarkupPercentage"));
 
@@ -200,12 +197,11 @@ public class Simulation {
 		System.out.println("T: " + Clock.Time() + " | Simulation complete!");
 		System.out.println("Final Delivery time: " + Clock.Time());
 		System.out.printf("Delay: %.2f%n", total_delay);
-		if(COMMERCIAL_DISPLAY) {
+		if(CHARGE_DISPLAY) {
 			System.out.printf("Total number of items delivered is %d%n",MAIL_DELIVERED.size());
 			System.out.printf("Billable activity is %.2f%n", BILLABLE_ACTIVITY);
-			System.out.printf("Total activity cost is %.2f%n", TOTAL_ACTIVITY_UNITS * ACTIVITY_UNITPRICE);
+			System.out.printf("Total activity cost is %.2f%n", BILLABLE_ACTIVITY * ACTIVITY_UNITPRICE);
 		}
 	}
-
 
 }

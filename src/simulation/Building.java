@@ -8,13 +8,13 @@ public class Building {
     private HashMap<Integer,Double> ServiceFeeTable = new HashMap<>();
 
     private static Building _instance = null;
-	
+
     /** The number of floors in the building **/
     public static int FLOORS;
-    
+
     /** Represents the ground floor location */
     public static final int LOWEST_FLOOR = 1;
-    
+
     /** Represents the mailroom location */
     public static final int MAILROOM_LOCATION = 1;
 

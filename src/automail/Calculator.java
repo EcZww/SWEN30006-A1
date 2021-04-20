@@ -8,6 +8,7 @@ public class Calculator {
     private double activityCost;
     private double serviceFee;
     private int lookUpCount;
+    private final double LOOKUP=0.1;
 
     private WifiModem wifiModem = WifiModem.getInstance(Building.MAILROOM_LOCATION);
     private Building building = Building.getInstance();
@@ -24,12 +25,13 @@ public class Calculator {
     /** can add more features in future eg. Weight, delay penalty**/
     public void calculateCharge(MailItem deliveryItem, int current_floor, double currentActivityUnits, boolean finalCharge){
         serviceFee = lookUpServiceFee(current_floor);
-        activityCost = calculateActivityCost(currentActivityUnits, price.ACTIVITY_UNITPRICE);
+        /** charge tenant only once for lookup hence +LOOKUP**/
+        activityCost = calculateActivityCost(currentActivityUnits+LOOKUP, price.ACTIVITY_UNITPRICE);
         charge = (serviceFee + activityCost)*(1+price.MARKUP_PERCENTAGE);
         if(finalCharge) {
             deliveryItem.setFinalCharge(charge);
             deliveryItem.setServiceFee(serviceFee);
-            deliveryItem.setActivityUnits(currentActivityUnits);
+            deliveryItem.setActivityUnits(currentActivityUnits+(lookUpCount*LOOKUP));
             deliveryItem.setActivityUnitPrice(price.ACTIVITY_UNITPRICE);
         }
         else{

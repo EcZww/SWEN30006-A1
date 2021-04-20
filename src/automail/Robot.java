@@ -14,13 +14,13 @@ import simulation.IMailDelivery;
  */
 public class Robot {
 	
-    static public final int INDIVIDUAL_MAX_WEIGHT = 2000;
+    public static final int INDIVIDUAL_MAX_WEIGHT = 2000;
     /** new changes**/
-    static public final int MOVEMENT = 5;
-    static public final double LOOKUP = 0.1;
+    public static final int MOVEMENT = 5;
+    public static final double LOOKUP = 0.1;
 
     IMailDelivery delivery;
-    protected final String id;
+    protected final String ID;
     /** Possible states the robot can be in */
     public enum RobotState { DELIVERING, WAITING, RETURNING }
     public RobotState current_state;
@@ -29,15 +29,14 @@ public class Robot {
     private boolean receivedDispatch;
     /**new changes**/
     private double currentActivityUnits;
-    private double totalActivityUnits;
-    private double billableActivityUnits;
+    private double totalBillableActivityUnits;
 
     private final MailPool MAILPOOL;
     private final Calculator CALCULATOR = new Calculator();
 
     private MailItem deliveryItem = null;
     private MailItem tube = null;
-    
+
     private int deliveryCounter;
 
 
@@ -49,21 +48,19 @@ public class Robot {
      * @param mailPool is the source of mail items
      */
     public Robot(IMailDelivery delivery, MailPool mailPool, int number) throws Exception {
-    	this.id = "R" + number;
+    	this.ID = "R" + number;
     	current_state = RobotState.RETURNING;
         current_floor = Building.MAILROOM_LOCATION;
         this.delivery = delivery;
         this.MAILPOOL = mailPool;
         this.receivedDispatch = false;
         this.deliveryCounter = 0;
-        /**new changes**/
         this.currentActivityUnits = 0;
-        this.billableActivityUnits = 0;
-        this.totalActivityUnits = 0;
+        this.totalBillableActivityUnits = 0;
     }
-    
+
     /**
-     * This is called when a robot is assigned the mail items and ready to dispatch for the delivery 
+     * This is called when a robot is assigned the mail items and ready to dispatch for the delivery
      */
     public void dispatch() {
     	receivedDispatch = true;
@@ -73,14 +70,12 @@ public class Robot {
      * This is called on every time step
      * @throws ExcessiveDeliveryException if robot delivers more than the capacity of the tube without refilling
      */
-    public void operate() throws ExcessiveDeliveryException {   
+    public void operate() throws ExcessiveDeliveryException {
     	switch(current_state) {
     		/** This state is triggered when the robot is returning to the mailroom after a delivery */
     		case RETURNING:
     			/** If its current position is at the mailroom, then the robot should change state */
                 if(current_floor == Building.MAILROOM_LOCATION){
-                    totalActivityUnits += currentActivityUnits;
-                    currentActivityUnits = 0;
                 	if (tube != null) {
                         MAILPOOL.addToPool(tube);
                         System.out.printf("T: %3d > old addToPool [%s]%n", Clock.Time(), tube.toString());
@@ -92,7 +87,7 @@ public class Robot {
                 } else {
                 	/** If the robot is not at the mailroom floor yet, then move towards it! */
                     moveTowards(Building.MAILROOM_LOCATION);
-                    totalActivityUnits += MOVEMENT;
+
                     break;
                 }
     		case WAITING:
@@ -106,29 +101,22 @@ public class Robot {
                 break;
     		case DELIVERING:
     			if(current_floor == destination_floor){ // If already here drop off either way
-                    /** Delivery complete, report this to the simulator! */
-
+                    /** Delivery complete, report this to the simulator! **/
                     CALCULATOR.calculateCharge(deliveryItem,current_floor,
                             currentActivityUnits,true);
-
+                    currentActivityUnits += CALCULATOR.getLookUpCount()*LOOKUP;
 
                     delivery.deliver(deliveryItem);
-
-                    currentActivityUnits += CALCULATOR.getLookUpCount()*LOOKUP;
-                    totalActivityUnits += currentActivityUnits;
-                    currentActivityUnits = 0;
-                    /** only charge tenant once for lookup **/
-                    billableActivityUnits += LOOKUP;
-                    /** charge tenant round trip with unit = no. of floors to travel from mailroom**/
-                    billableActivityUnits += (deliveryItem.destination_floor-Building.MAILROOM_LOCATION)*2*MOVEMENT;
                     deliveryItem = null;
-
                     if(deliveryCounter > 2){  // Implies a simulation bug
                     	throw new ExcessiveDeliveryException();
                     }
                     /** Check if want to return, i.e. if there is no item in the tube*/
                     if(tube == null){
                     	changeState(RobotState.RETURNING);
+                    	currentActivityUnits += (current_floor-Building.MAILROOM_LOCATION)*MOVEMENT;
+                        totalBillableActivityUnits += currentActivityUnits;
+                        currentActivityUnits = 0;
                     }
                     else{
                         /** If there is another item, set the robot's route to the location to deliver the item */
@@ -148,12 +136,9 @@ public class Robot {
     }
 
     public double getTotalBillableActivity(){
-        return billableActivityUnits;
+        return totalBillableActivityUnits;
     }
 
-    public double getTotalActivityUnits(){
-        return totalActivityUnits;
-    }
 
     /**
      * Sets the route for the robot
@@ -176,7 +161,7 @@ public class Robot {
     }
 
     private String getIdTube() {
-    	return String.format("%s(%1d)", this.id, (tube == null ? 0 : 1));
+    	return String.format("%s(%1d)", this.ID, (tube == null ? 0 : 1));
     }
 
     /**
@@ -205,13 +190,13 @@ public class Robot {
 	public void addToHand(MailItem mailItem) throws ItemTooHeavyException {
 		assert(deliveryItem == null);
 		deliveryItem = mailItem;
-		if (deliveryItem.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+		if (deliveryItem.WEIGHT > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
 	}
 
 	public void addToTube(MailItem mailItem) throws ItemTooHeavyException {
 		assert(tube == null);
 		tube = mailItem;
-		if (tube.weight > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
+		if (tube.WEIGHT > INDIVIDUAL_MAX_WEIGHT) throw new ItemTooHeavyException();
 	}
 
 

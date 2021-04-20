@@ -19,7 +19,7 @@ public class Automail {
     public Robot getRobot(String robotID){
         Robot robot = null;
         for (Robot value : robots) {
-            if (value.id.equals(robotID)) {
+            if (value.ID.equals(robotID)) {
                 robot = value;
             }
         }

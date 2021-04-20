@@ -54,7 +54,7 @@ public class MailPool {
 						order = -1;
 					}
 					else if(i1_charge < i2_charge){
-						order = -1;
+						order = 1;
 					}
 				}
 				else{
@@ -91,7 +91,7 @@ public class MailPool {
      */
 	public void addToPool(MailItem mailItem) {
 		Item item = new Item(mailItem);
-		int activityUnits = (item.destination - Building.MAILROOM_LOCATION)*MOVEMENT;
+		int activityUnits = (item.destination - Building.MAILROOM_LOCATION)*2*MOVEMENT;
 		int destFloor = item.destination;
 		pool.add(item);
 		calculator.calculateCharge(item.mailItem,destFloor ,activityUnits,false);
@@ -113,17 +113,16 @@ public class MailPool {
 	private void loadItem(ListIterator<Robot> i) throws ItemTooHeavyException {
 		Robot robot = i.next();
 		assert(robot.isEmpty());
-		// System.out.printf("P: %3d%n", pool.size());
 		ListIterator<Item> j = pool.listIterator();
 		if (pool.size() > 0) {
 			try {
 				Item item = j.next();
 				robot.addToHand(item.mailItem);// hand first as we want higher priority delivered first
-				item.mailItem.setDeliveringRobotId(robot.id);
+				item.mailItem.setDeliveringRobotId(robot.ID);
 				j.remove();
 			if (pool.size() > 0) {
 				robot.addToTube(j.next().mailItem);
-				item.mailItem.setDeliveringRobotId(robot.id);
+				item.mailItem.setDeliveringRobotId(robot.ID);
 				j.remove();
 			}
 
