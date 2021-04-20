@@ -2,6 +2,7 @@ package automail;
 
 import com.unimelb.swen30006.wifimodem.WifiModem;
 import simulation.Building;
+
 public class Calculator {
     private double charge;
     private double activityCost;
@@ -10,6 +11,7 @@ public class Calculator {
 
     private WifiModem wifiModem = WifiModem.getInstance(Building.MAILROOM_LOCATION);
     private Building building = Building.getInstance();
+    private Price price = Price.getInstance();
 
 
     public Calculator() throws Exception {
@@ -19,19 +21,16 @@ public class Calculator {
         this.lookUpCount = 0;
     }
 
-    public void calculateCharge(MailItem deliveryItem, int current_floor, double markupPercentage, double activityUnitPrice
-            , double currentActivityUnits, boolean finalCharge){
+    /** can add more features in future eg. Weight, delay penalty**/
+    public void calculateCharge(MailItem deliveryItem, int current_floor, double currentActivityUnits, boolean finalCharge){
         serviceFee = lookUpServiceFee(current_floor);
-        activityCost = calculateActivityCost(currentActivityUnits,activityUnitPrice);
-        //System.out.println(currentActivityUnits);
-        charge = (serviceFee + activityCost)*(1+markupPercentage);
-        System.out.printf("charge = (%.3f + %.3f * %.3f)*(1+%.3f) = %.2f%n",
-         serviceFee,currentActivityUnits,activityUnitPrice,markupPercentage,charge);
+        activityCost = calculateActivityCost(currentActivityUnits, price.ACTIVITY_UNITPRICE);
+        charge = (serviceFee + activityCost)*(1+price.MARKUP_PERCENTAGE);
         if(finalCharge) {
             deliveryItem.setFinalCharge(charge);
             deliveryItem.setServiceFee(serviceFee);
             deliveryItem.setActivityUnits(currentActivityUnits);
-            deliveryItem.setActivityUnitPrice(activityUnitPrice);
+            deliveryItem.setActivityUnitPrice(price.ACTIVITY_UNITPRICE);
         }
         else{
             deliveryItem.setExpectedCharge(charge);
@@ -47,10 +46,12 @@ public class Calculator {
     public double lookUpServiceFee(int current_floor){
         lookUpCount=0;
         serviceFee = wifiModem.forwardCallToAPI_LookupPrice(current_floor);
+        /** if lookup fails, keep looking up until a price is returned, count number of lookups**/
         if(serviceFee ==-1) {
             while (serviceFee == -1) {
-                System.out.println("failed");
+                /** check if current floor has a previously looked up service fee recorded**/
                 serviceFee = building.getFloorServiceFee(current_floor);
+                /** if not, request lookup from wifimodem**/
                 if(serviceFee == -1) {
                     serviceFee = wifiModem.forwardCallToAPI_LookupPrice(current_floor);
                 }
@@ -58,7 +59,6 @@ public class Calculator {
             }
         }
         lookUpCount += 1;
-        System.out.println("Looked up "+lookUpCount+" times,serviceFee is "+serviceFee);
         building.insertServiceFee(current_floor,serviceFee);
         return serviceFee;
     }

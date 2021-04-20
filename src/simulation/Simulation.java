@@ -15,6 +15,7 @@ import com.unimelb.swen30006.wifimodem.WifiModem;
 import automail.Automail;
 import automail.MailItem;
 import automail.MailPool;
+import automail.Price;
 
 /**
  * This class simulates the behaviour of AutoMail
@@ -26,7 +27,7 @@ public class Simulation {
 	private static double MARKUP_PERCENTAGE;
 	private static double ACTIVITY_UNITPRICE;
 	private static double BILLABLE_ACTIVITY;
-	private static double TOTAL_ACTIVITY_COST;
+	private static double TOTAL_ACTIVITY_UNITS;
 
 	/**
 	 * Constant for the mail generator
@@ -44,7 +45,7 @@ public class Simulation {
 		Properties automailProperties = setUpProperties();
 
 		//An array list to record mails that have been delivered
-		MAIL_DELIVERED = new ArrayList<MailItem>();
+		MAIL_DELIVERED = new ArrayList<>();
 
 		/** This code section below is to save a random seed for generating mails.
 		 * If a program argument is entered, the first argument will be a random seed.
@@ -79,10 +80,11 @@ public class Simulation {
 		 * This code section is for running a simulation
 		 */
 		/* Instantiate MailPool and Automail */
-		MailPool mailPool = new MailPool(NUM_ROBOTS, MARKUP_PERCENTAGE,ACTIVITY_UNITPRICE, CHARGE_THRESHOLD);
+		Price.getInstance(ACTIVITY_UNITPRICE,MARKUP_PERCENTAGE,CHARGE_THRESHOLD);
+		MailPool mailPool = new MailPool(NUM_ROBOTS);
 		Automail automail = new Automail(mailPool, new ReportDelivery(), NUM_ROBOTS);
 		/**new changes**/
-		MailGenerator mailGenerator = new MailGenerator(MAIL_TO_CREATE, MAIL_MAX_WEIGHT, mailPool, seedMap);
+		MailGenerator mailGenerator = new MailGenerator(MAIL_TO_CREATE, MAIL_MAX_WEIGHT,COMMERCIAL_DISPLAY, mailPool, seedMap);
 
 		/** Generate all the mails */
 		mailGenerator.generateAllMail();
@@ -104,9 +106,8 @@ public class Simulation {
 
 		for (int i = 0; i < NUM_ROBOTS; i++){
 			String id = "R"+i;
-			System.out.println(BILLABLE_ACTIVITY);
-			System.out.println(automail.getRobot(id).getTotalBillableActivity());
 			BILLABLE_ACTIVITY += automail.getRobot(id).getTotalBillableActivity();
+			TOTAL_ACTIVITY_UNITS += automail.getRobot(id).getTotalActivityUnits();
 
 		}
 		printResults();
@@ -197,9 +198,13 @@ public class Simulation {
 
 	public static void printResults() {
 		System.out.println("T: " + Clock.Time() + " | Simulation complete!");
-		System.out.printf("Billable activity is %.2f%n", BILLABLE_ACTIVITY);
-		System.out.printf("Total activity cost is %.2f%n", BILLABLE_ACTIVITY*ACTIVITY_UNITPRICE);
+		System.out.println("Final Delivery time: " + Clock.Time());
 		System.out.printf("Delay: %.2f%n", total_delay);
+		if(COMMERCIAL_DISPLAY) {
+			System.out.printf("Total number of items delivered is %d%n",MAIL_DELIVERED.size());
+			System.out.printf("Billable activity is %.2f%n", BILLABLE_ACTIVITY);
+			System.out.printf("Total activity cost is %.2f%n", TOTAL_ACTIVITY_UNITS * ACTIVITY_UNITPRICE);
+		}
 	}
 
 

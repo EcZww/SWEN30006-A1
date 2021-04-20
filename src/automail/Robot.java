@@ -1,12 +1,12 @@
 package automail;
 
-import com.unimelb.swen30006.wifimodem.WifiModem;
+
 import exceptions.ExcessiveDeliveryException;
 import exceptions.ItemTooHeavyException;
 import simulation.Building;
 import simulation.Clock;
 import simulation.IMailDelivery;
-import automail.Calculator;
+
 
 
 /**
@@ -18,7 +18,6 @@ public class Robot {
     /** new changes**/
     static public final int MOVEMENT = 5;
     static public final double LOOKUP = 0.1;
-    //private double totalBillableActivity = 0;
 
     IMailDelivery delivery;
     protected final String id;
@@ -27,21 +26,14 @@ public class Robot {
     public RobotState current_state;
     private int current_floor;
     private int destination_floor;
-    private MailPool mailPool;
     private boolean receivedDispatch;
     /**new changes**/
-    private double markupPercentage;
-    private double activityUnitPrice;
     private double currentActivityUnits;
     private double totalActivityUnits;
     private double billableActivityUnits;
-    //private double charge;
-    //private double activityCost;
-    //private double serviceFee;
 
-
-    //private WifiModem wifiModem = WifiModem.getInstance(Building.MAILROOM_LOCATION);
-    private Calculator calculator = new Calculator();
+    private final MailPool MAILPOOL;
+    private final Calculator CALCULATOR = new Calculator();
 
     private MailItem deliveryItem = null;
     private MailItem tube = null;
@@ -58,21 +50,16 @@ public class Robot {
      */
     public Robot(IMailDelivery delivery, MailPool mailPool, int number) throws Exception {
     	this.id = "R" + number;
-        // current_state = RobotState.WAITING;
     	current_state = RobotState.RETURNING;
         current_floor = Building.MAILROOM_LOCATION;
         this.delivery = delivery;
-        this.mailPool = mailPool;
+        this.MAILPOOL = mailPool;
         this.receivedDispatch = false;
         this.deliveryCounter = 0;
         /**new changes**/
         this.currentActivityUnits = 0;
         this.billableActivityUnits = 0;
-        this.markupPercentage = mailPool.getMarkupPercentage();
-        this.activityUnitPrice = mailPool.getActivityUnitPrice();
-        //this.charge = 0;
-        //this.activityCost = 0;
-        //this.serviceFee = 0;
+        this.totalActivityUnits = 0;
     }
     
     /**
@@ -90,17 +77,17 @@ public class Robot {
     	switch(current_state) {
     		/** This state is triggered when the robot is returning to the mailroom after a delivery */
     		case RETURNING:
-    		    totalActivityUnits += currentActivityUnits;
-    		    currentActivityUnits = 0;
     			/** If its current position is at the mailroom, then the robot should change state */
                 if(current_floor == Building.MAILROOM_LOCATION){
+                    totalActivityUnits += currentActivityUnits;
+                    currentActivityUnits = 0;
                 	if (tube != null) {
-                		mailPool.addToPool(tube);
+                        MAILPOOL.addToPool(tube);
                         System.out.printf("T: %3d > old addToPool [%s]%n", Clock.Time(), tube.toString());
                         tube = null;
                 	}
         			/** Tell the sorter the robot is ready */
-        			mailPool.registerWaiting(this);
+                    MAILPOOL.registerWaiting(this);
                 	changeState(RobotState.WAITING);
                 } else {
                 	/** If the robot is not at the mailroom floor yet, then move towards it! */
@@ -121,18 +108,19 @@ public class Robot {
     			if(current_floor == destination_floor){ // If already here drop off either way
                     /** Delivery complete, report this to the simulator! */
 
-                    calculator.calculateCharge(deliveryItem,current_floor,markupPercentage,
-                            activityUnitPrice,currentActivityUnits,true);
-                    /** only charge tenant once for lookup **/
+                    CALCULATOR.calculateCharge(deliveryItem,current_floor,
+                            currentActivityUnits,true);
+
 
                     delivery.deliver(deliveryItem);
 
-                    currentActivityUnits += calculator.getLookUpCount()*LOOKUP;
-                    System.out.println("bt before = "+billableActivityUnits);
+                    currentActivityUnits += CALCULATOR.getLookUpCount()*LOOKUP;
+                    totalActivityUnits += currentActivityUnits;
+                    currentActivityUnits = 0;
+                    /** only charge tenant once for lookup **/
                     billableActivityUnits += LOOKUP;
-                    System.out.println("bt after = "+billableActivityUnits);
+                    /** charge tenant round trip with unit = no. of floors to travel from mailroom**/
                     billableActivityUnits += (deliveryItem.destination_floor-Building.MAILROOM_LOCATION)*2*MOVEMENT;
-                    System.out.println("bt final = "+billableActivityUnits);
                     deliveryItem = null;
 
                     if(deliveryCounter > 2){  // Implies a simulation bug

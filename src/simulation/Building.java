@@ -1,8 +1,6 @@
 package simulation;
 
-import com.unimelb.swen30006.wifimodem.WifiModem;
 
-import java.io.Serial;
 import java.util.HashMap;
 
 public class Building {
@@ -35,7 +33,6 @@ public class Building {
 
     public static Building getInstance() throws Exception {
         if (_instance == null) {
-            Class var1 = Building.class;
             synchronized(Building.class) {
                 if (_instance == null) {
                     _instance = new Building();

@@ -27,14 +27,15 @@ public class MailPool {
 		}
 	}
 
-	//use charge threshold here
+
 	public class ItemComparator implements Comparator<Item> {
 		@Override
 		public int compare(Item i1, Item i2) {
 			int order = 0;
 			double i1_charge = i1.mailItem.getExpectedCharge();
 			double i2_charge = i2.mailItem.getExpectedCharge();
-			if (chargeThreshold == 0) {
+			double chargeThreshold = price.CHARGE_THRESHOLD;
+			if (price.CHARGE_THRESHOLD == 0) {
 				if (i1.destination < i2.destination) {
 					order = 1;
 				} else if (i1.destination > i2.destination) {
@@ -73,20 +74,15 @@ public class MailPool {
 	private LinkedList<Item> pool;
 	private LinkedList<Robot> robots;
 	static public final int MOVEMENT = 5;
+	private Price price = Price.getInstance();
 
 	private Calculator calculator = new Calculator();
-	private double serviceFee;
-	private double markupPercentage;
-	private double activityUnitPrice;
-	private double chargeThreshold;
 
-	public MailPool(int nrobots, double markupPercentage, double activityUnitPrice, double chargeThreshold) throws Exception {
+
+	public MailPool(int nrobots) throws Exception {
 		pool = new LinkedList<Item>();
 		robots = new LinkedList<Robot>();
-		this.serviceFee = 0;
-		this.markupPercentage = markupPercentage;
-		this.activityUnitPrice = activityUnitPrice;
-		this.chargeThreshold = chargeThreshold;
+
 	}
 
 	/**
@@ -98,8 +94,7 @@ public class MailPool {
 		int activityUnits = (item.destination - Building.MAILROOM_LOCATION)*MOVEMENT;
 		int destFloor = item.destination;
 		pool.add(item);
-		calculator.calculateCharge(item.mailItem,destFloor,markupPercentage,activityUnitPrice,
-				activityUnits,false);
+		calculator.calculateCharge(item.mailItem,destFloor ,activityUnits,false);
 		pool.sort(new ItemComparator());
 	}
 	
@@ -146,27 +141,5 @@ public class MailPool {
 	public void registerWaiting(Robot robot) { // assumes won't be there already
 		robots.add(robot);
 	}
-
-	public double getMarkupPercentage() {
-		return markupPercentage;
-	}
-
-	public double getActivityUnitPrice() {
-		return activityUnitPrice;
-	}
-
-	/**public double calculateExpectedCharge(MailItem mailitem){
-		this.serviceFee = -1;
-		while(serviceFee==-1) {
-			//System.out.println(mailitem.getDestFloor());
-			serviceFee = wifiModem.forwardCallToAPI_LookupPrice(mailitem.getDestFloor());
-		}
-
-		//System.out.println("fee is "+ serviceFee);
-		double expected_charge = ((mailitem.destination_floor - Building.MAILROOM_LOCATION)
-				*activityUnitPrice + serviceFee)*(1+markupPercentage);
-		return expected_charge;
-
-	}**/
 
 }

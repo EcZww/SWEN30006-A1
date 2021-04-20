@@ -1,14 +1,9 @@
 package automail;
 
-import com.unimelb.swen30006.wifimodem.WifiModem;
-import simulation.Building;
-import simulation.Simulation;
 
 import java.util.Map;
 import java.util.TreeMap;
-import automail.Robot;
 
-// import java.util.UUID;
 
 /**
  * Represents a mail item
@@ -23,6 +18,7 @@ public class MailItem {
     protected final int arrival_time;
     /** The weight in grams of the mail item */
     protected final int weight;
+    private final boolean COMMERCIAL_DISPLAY;
 
     protected String deliveringRobotId;
 
@@ -34,13 +30,16 @@ public class MailItem {
 
 
 
+
     /**
      * Constructor for a MailItem
      * @param dest_floor the destination floor intended for this mail item
      * @param arrival_time the time that the mail arrived
      * @param weight the weight of this mail item
+     * @param commercial_display switch for turning on/off commercial stats display
+     *
      */
-    public MailItem(int dest_floor, int arrival_time, int weight) {
+    public MailItem(int dest_floor, int arrival_time, int weight, boolean commercial_display) {
         this.destination_floor = dest_floor;
         this.id = String.valueOf(hashCode());
         this.arrival_time = arrival_time;
@@ -50,12 +49,12 @@ public class MailItem {
         this.activityUnits = 0;
         this.serviceFee = 0;
         this.activityUnitPrice =0;
+        this.COMMERCIAL_DISPLAY = commercial_display;
     }
 
-    //serive fee,activity unit, markup percentage, activity unit price
-
     public String toString(boolean deliveredStat){
-        if(deliveredStat) {
+        /** check if called by delivery call and if cost stats needs to be displayed **/
+        if(deliveredStat && COMMERCIAL_DISPLAY) {
             return String.format("Mail Item:: ID: %6s | Arrival: %4d | Destination: %2d | Weight: %4d | Charge: %.2f" +
                             " | Cost: %.2f | Fee: %.2f | Activity: %.2f"
                     , id, arrival_time, destination_floor, weight, finalCharge,
@@ -100,7 +99,7 @@ public class MailItem {
    }
    
 	static private int count = 0;
-	static private Map<Integer, Integer> hashMap = new TreeMap<Integer, Integer>();
+	static private Map<Integer, Integer> hashMap = new TreeMap<>();
 
 	@Override
 	public int hashCode() {

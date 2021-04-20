@@ -12,6 +12,7 @@ public class MailGenerator {
 
     public final int MAIL_TO_CREATE;
     public final int MAIL_MAX_WEIGHT;
+    public final boolean COMMERCIAL_DISPLAY;
 
     
     private int mailCreated;
@@ -31,7 +32,7 @@ public class MailGenerator {
      * @param mailPool where mail items go on arrival
      * @param seed random seed for generating mail
      */
-    public MailGenerator(int mailToCreate, int mailMaxWeight,MailPool mailPool, HashMap<Boolean,Integer> seed){
+    public MailGenerator(int mailToCreate, int mailMaxWeight, boolean commercial_display, MailPool mailPool, HashMap<Boolean,Integer> seed){
         if(seed.containsKey(true)){
         	this.random = new Random((long) seed.get(true));
         }
@@ -41,6 +42,7 @@ public class MailGenerator {
         // Vary arriving mail by +/-20%
         MAIL_TO_CREATE = mailToCreate*4/5 + random.nextInt(mailToCreate*2/5);
         MAIL_MAX_WEIGHT = mailMaxWeight;
+        COMMERCIAL_DISPLAY = commercial_display;
         // System.out.println("Num Mail Items: "+MAIL_TO_CREATE);
         mailCreated = 0;
         complete = false;
@@ -57,7 +59,7 @@ public class MailGenerator {
         int arrivalTime = generateArrivalTime();
         int weight = generateWeight();
 
-        newMailItem = new MailItem(destinationFloor,arrivalTime,weight);
+        newMailItem = new MailItem(destinationFloor,arrivalTime,weight,COMMERCIAL_DISPLAY);
         return newMailItem;
     }
 
