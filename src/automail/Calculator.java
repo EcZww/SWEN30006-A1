@@ -23,15 +23,18 @@ public class Calculator {
     }
 
     /** can add more features in future eg. Weight, delay penalty**/
-    public void calculateCharge(MailItem deliveryItem, int current_floor, double currentActivityUnits, boolean finalCharge){
-        serviceFee = lookUpServiceFee(current_floor);
+    public void calculateCharge(MailItem deliveryItem, int destination, double activityUnits, boolean finalCharge){
+        serviceFee = lookUpServiceFee(destination);
         /** charge tenant only once for lookup hence +LOOKUP**/
-        activityCost = calculateActivityCost(currentActivityUnits+LOOKUP, price.ACTIVITY_UNITPRICE);
+
+
+        activityCost = calculateActivityCost(activityUnits+LOOKUP, price.ACTIVITY_UNITPRICE);
+
         charge = (serviceFee + activityCost)*(1+price.MARKUP_PERCENTAGE);
         if(finalCharge) {
             deliveryItem.setFinalCharge(charge);
             deliveryItem.setServiceFee(serviceFee);
-            deliveryItem.setActivityUnits(currentActivityUnits+(lookUpCount*LOOKUP));
+            deliveryItem.setActivityUnits(activityUnits+(lookUpCount*LOOKUP));
             deliveryItem.setActivityUnitPrice(price.ACTIVITY_UNITPRICE);
         }
         else{

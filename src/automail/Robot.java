@@ -102,8 +102,10 @@ public class Robot {
     		case DELIVERING:
     			if(current_floor == destination_floor){ // If already here drop off either way
                     /** Delivery complete, report this to the simulator! **/
-                    CALCULATOR.calculateCharge(deliveryItem,current_floor,
-                            currentActivityUnits,true);
+
+
+                    double mailActivityUnits = (deliveryItem.getDestFloor() - Building.MAILROOM_LOCATION)*2*MOVEMENT;
+                    CALCULATOR.calculateCharge(deliveryItem,current_floor, mailActivityUnits, true);
                     currentActivityUnits += CALCULATOR.getLookUpCount()*LOOKUP;
 
                     delivery.deliver(deliveryItem);

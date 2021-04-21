@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="89bd91e9-c2ed-4022-aa75-ee6076de34e6" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Automail/.classpath" beforeDir="false" afterPath="$PROJECT_DIR$/Automail/.classpath" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Automail/automail.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Automail/automail.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Automail/bin/automail/MailPool.class" beforeDir="false" afterPath="$PROJECT_DIR$/Automail/bin/automail/MailPool.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Automail/bin/simulation/MailGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/Automail/bin/simulation/MailGenerator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Automail/bin/simulation/Simulation$ReportDelivery.class" beforeDir="false" afterPath="$PROJECT_DIR$/Automail/bin/simulation/Simulation$ReportDelivery.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Automail/bin/simulation/Simulation.class" beforeDir="false" afterPath="$PROJECT_DIR$/Automail/bin/simulation/Simulation.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Automail/src/automail/MailPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/Automail/src/automail/MailPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Automail/src/simulation/MailGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/Automail/src/simulation/MailGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Automail/src/simulation/Simulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/Automail/src/simulation/Simulation.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1rNn5p1jPRFWwPdo5JoyZA91bQj" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Desktop/SWEN30006-A1-main/SWEN30006-A1-main" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="89bd91e9-c2ed-4022-aa75-ee6076de34e6" name="Default Changelist" comment="" />
+      <created>1618825236060</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1618825236060</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
