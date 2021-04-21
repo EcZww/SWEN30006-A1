@@ -26,8 +26,6 @@ public class Calculator {
     public void calculateCharge(MailItem deliveryItem, int destination, double activityUnits, boolean finalCharge){
         serviceFee = lookUpServiceFee(destination);
         /** charge tenant only once for lookup hence +LOOKUP**/
-
-
         activityCost = calculateActivityCost(activityUnits+LOOKUP, price.ACTIVITY_UNITPRICE);
 
         charge = (serviceFee + activityCost)*(1+price.MARKUP_PERCENTAGE);

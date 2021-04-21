@@ -159,7 +159,9 @@ public class Simulation {
 		CHARGE_DISPLAY = Boolean.parseBoolean(automailProperties.getProperty("ChargeDisplay"));
 		System.out.println("#Charge Display: " + CHARGE_DISPLAY);
 		ACTIVITY_UNITPRICE = Double.parseDouble(automailProperties.getProperty("ActivityUnitPrice"));
+		System.out.println("#ActivityUnitPrice: " + ACTIVITY_UNITPRICE);
 		MARKUP_PERCENTAGE = Double.parseDouble(automailProperties.getProperty("MarkupPercentage"));
+		System.out.println("#MarkupPercentage: "+MARKUP_PERCENTAGE);
 
 		return automailProperties;
 	}
